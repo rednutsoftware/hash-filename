@@ -17,7 +17,7 @@ convert()
 	#echo "$d $m $b"
 	#echo "$m $1"
 
-	$CMD_HASH $1
+	$CMD_HASH "$1"
 }
 
 make_dir_list()
