@@ -6,15 +6,34 @@ then
 	exit 1
 fi
 
-make_list()
+CMD_HASH=${CMD_HASH:-md5sum}
+
+convert()
 {
-	while read -r f
+	#d="$(dirname "$1")"
+	#b="$(basename "$1")"
+	#m="$(echo "$1" | $CMD_HASH | cut -d' ' -f1)"
+
+	#echo "$d $m $b"
+	#echo "$m $1"
+
+	$CMD_HASH $1
+}
+
+make_dir_list()
+{
+	while read -r line
 	do
-		d="$(dirname $f)"
-		b="$(basename $f)"
-		m="$(echo "$f" | md5sum | cut -d' ' -f1)"
-		echo "$d $m $b"
-	done < <(find $path -type f)
+		convert "$line" "D"
+	done < <(find $path -type d | sort)
+}
+
+make_file_list()
+{
+	while read -r line
+	do
+		convert "$line" "F"
+	done < <(find $path -type f | grep -v '@__thumb' | sort)
 }
 
 for path in "$@"
@@ -24,5 +43,6 @@ do
 		echo "path[$path] not found." > /dev/stderr
 		continue
 	fi
-	make_list "$path"
+	#make_dir_list "$path"
+	make_file_list "$path"
 done
